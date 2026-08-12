@@ -1,5 +1,8 @@
 terraform {
   required_version = ">= 1.5.0"
+
+  backend "s3" {}
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -155,4 +158,53 @@ resource "helm_release" "karpenter" {
   }
 
   depends_on = [module.eks, module.karpenter]
+}
+
+# ------------------------------------------------------------------------------
+# 5. Argo CD Helm Deployment (GitOps Delivery Engine)
+# ------------------------------------------------------------------------------
+resource "helm_release" "argocd" {
+  namespace        = "argocd"
+  create_namespace = true
+  name             = "argocd"
+  repository       = "https://argoproj.github.io/argo-helm"
+  chart            = "argo-cd"
+  version          = "7.3.11"
+
+  timeout = 900
+  wait    = false
+
+  set {
+    name  = "server.service.type"
+    value = "ClusterIP"
+  }
+
+  depends_on = [module.eks]
+}
+
+# ------------------------------------------------------------------------------
+# 6. Cloud-Native Observability Stack (kube-prometheus-stack)
+# ------------------------------------------------------------------------------
+resource "helm_release" "prometheus_stack" {
+  namespace        = "monitoring"
+  create_namespace = true
+  name             = "kube-prometheus-stack"
+  repository       = "https://prometheus-community.github.io/helm-charts"
+  chart            = "kube-prometheus-stack"
+  version          = "60.0.1"
+
+  timeout = 900
+  wait    = false
+
+  set {
+    name  = "grafana.enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues"
+    value = "false"
+  }
+
+  depends_on = [module.eks]
 }

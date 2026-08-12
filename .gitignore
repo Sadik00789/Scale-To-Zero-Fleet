@@ -3,8 +3,10 @@
 *.tfstate
 *.tfstate.*
 *.tfplan
+backend.hcl
+backend.tfvars
 
-# Executables
+# Executables & Binaries
 *.exe
 terraform.exe
 
