@@ -1,0 +1,25 @@
+name: Scale-To-Zero Fleet Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  heavy-build-job:
+    runs-on: scale-to-zero-runner # Directs job to ARC scale set
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Execute Heavy Compute Task
+        run: |
+          echo "===================================================="
+          echo "Executing on Dynamic EC2 Spot Instance via Karpenter"
+          echo "===================================================="
+          hostname
+          uname -a
+          lscpu | grep "Model name\|CPU(s):"
+          echo "Simulating 45s build process..."
+          sleep 45
+          echo "Build Complete!"

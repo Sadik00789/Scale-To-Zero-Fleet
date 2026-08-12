@@ -1,0 +1,14 @@
+# Terraform local data & state files
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Executables
+*.exe
+terraform.exe
+
+# OS / Editor clutter
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,25 @@
+githubConfigUrl: "https://github.com/Sadik00789/Scale-To-Zero-Fleet"
+
+# Secret created via CLI prior to Helm install
+githubConfigSecret: "github-token-secret"
+
+minRunners: 0 # Key scale-to-zero parameter
+maxRunners: 5
+
+runnerScaleSetName: "scale-to-zero-runner"
+
+template:
+  spec:
+    nodeSelector:
+      role: github-runner # Forces pod onto Karpenter Spot nodes
+    tolerations:
+      - key: "karpenter.sh/capacity-type"
+        operator: "Exists"
+    containers:
+      - name: runner
+        image: ghcr.io/actions/actions-runner:latest
+        command: ["/home/runner/run.sh"]
+        resources:
+          requests:
+            cpu: "1.5"
+            memory: "2Gi"

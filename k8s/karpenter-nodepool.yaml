@@ -1,0 +1,49 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: spot-runner-nodeclass
+spec:
+  amiFamily: AL2023
+  role: "Karpenter-scale-to-zero-eks-20260812105215648600000016" # Placeholder replaced by script
+  amiSelectorTerms:
+    - alias: al2023@latest
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "scale-to-zero-eks"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "scale-to-zero-eks"
+  tags:
+    karpenter.sh/discovery: "scale-to-zero-eks"
+    Intent: "Ephemeral-GitHub-Runner"
+
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: spot-runners
+spec:
+  template:
+    metadata:
+      labels:
+        role: github-runner
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: spot-runner-nodeclass
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "t"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: In
+          values: ["5", "6"]
+  limits:
+    cpu: "32"
+  disruption:
+    consolidationPolicy: WhenEmpty
+    consolidateAfter: 30s
