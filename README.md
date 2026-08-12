@@ -1,3 +1,4 @@
+
 # ⚡ Scale-To-Zero Fleet
 
 > **Ephemeral, Cost-Optimized GitHub Actions Runner Fleet on AWS EKS powered by Karpenter & Actions Runner Controller (ARC)**
@@ -203,3 +204,8 @@ terraform destroy -auto-approve
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+
+<img width="1920" height="1080" alt="Screenshot 2026-08-12 174444" src="https://github.com/user-attachments/assets/478c25ff-0264-4eb4-83eb-664bc0ac2210" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-12 174452" src="https://github.com/user-attachments/assets/a19ed805-230c-4c7c-8c96-a8f2a38aa3d4" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-12 174458" src="https://github.com/user-attachments/assets/ec564ccd-fd7e-4263-8ea9-b32a0037adec" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-12 174430" src="https://github.com/user-attachments/assets/35136aa5-70d9-4616-b923-ec07cf36fe10" />
