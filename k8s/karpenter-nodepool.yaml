@@ -4,7 +4,7 @@ metadata:
   name: spot-runner-nodeclass
 spec:
   amiFamily: AL2023
-  role: "Karpenter-scale-to-zero-eks-20260812105215648600000016" # Placeholder replaced by script
+  role: "Karpenter-scale-to-zero-eks-20260812131253885900000011"
   amiSelectorTerms:
     - alias: al2023@latest
   subnetSelectorTerms:

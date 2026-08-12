@@ -84,8 +84,8 @@ module "eks" {
       capacity_type  = "SPOT"
 
       min_size     = 1
-      max_size     = 2
-      desired_size = 1
+      max_size     = 4
+      desired_size = 2
 
       labels = {
         "role" = "system"
