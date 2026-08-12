@@ -96,16 +96,17 @@ module "eks" {
 }
 
 # ------------------------------------------------------------------------------
-# 3. Karpenter Controller IAM Roles & Node IAM Profile
+# 3. Karpenter Controller IAM Roles & Node IAM Profile (With IRSA Enabled)
 # ------------------------------------------------------------------------------
 module "karpenter" {
   source  = "terraform-aws-modules/eks/aws//modules/karpenter"
   version = "~> 20.11"
 
-  cluster_name = module.eks.cluster_name
-
-  enable_pod_identity  = true
-  create_node_iam_role = true
+  cluster_name           = module.eks.cluster_name
+  enable_irsa            = true
+  irsa_oidc_provider_arn = module.eks.oidc_provider_arn
+  enable_pod_identity    = false
+  create_node_iam_role   = true
 
   node_iam_role_additional_policies = {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
@@ -130,7 +131,7 @@ provider "helm" {
 }
 
 # ------------------------------------------------------------------------------
-# 4. Automate Karpenter Controller Helm Deployment (With Timeout Safeguards)
+# 4. Automate Karpenter Controller Helm Deployment (With IRSA Role Binding)
 # ------------------------------------------------------------------------------
 resource "helm_release" "karpenter" {
   namespace        = "karpenter"
@@ -140,7 +141,6 @@ resource "helm_release" "karpenter" {
   chart            = "karpenter"
   version          = "1.0.1"
 
-  # Prevents context deadline exceeded errors while EKS node group registers
   timeout = 900
   wait    = false
 
@@ -150,8 +150,8 @@ resource "helm_release" "karpenter" {
   }
 
   set {
-    name  = "settings.interruptionQueue"
-    value = module.karpenter.queue_name
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = module.karpenter.iam_role_arn
   }
 
   depends_on = [module.eks, module.karpenter]
